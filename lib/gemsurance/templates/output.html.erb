@@ -3,51 +3,73 @@
 <head>
   <meta charset="utf8"/>
   <title>Gemsurance Report</title>
+  <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+  <style>
+    .wrapper {
+      margin: 0 auto;
+      width: 980px;
+    }
+  </style>
 </head>
 <body>
   <div class="wrapper">
     <h1>Gemsurance Report</h1>
-    <table>
+    <table class="table">
       <thead>
         <tr>
           <th>Gem Name</th>
-          <th>Actual Bundle Version</th>
-          <th>Newest Available Version</th>
+          <th>Bundle Version</th>
+          <th>Newest Version</th>
           <th>Status</th>
           <th>Detailed Status</th>
         </tr>
       </thead>
       <tbody>
-        <% @gem_data.each do |gem_datum| %>
-          <tr class="">
-            <td><%= gem_datum[:name] %></td>
-            <td><%= gem_datum[:current_version] %></td>
-            <td><%= gem_datum[:newest_version] %></td>
+        <% @gem_infos.sort { |a, b| a.name.downcase <=> b.name.downcase }.each do |gem_info| %>
+          <%
+             row_class = if gem_info.current?
+               'success'
+             elsif gem_info.outdated?
+               'warning'
+             elsif gem_info.vulnerable?
+               'error'
+             else
+               nil
+             end
+          %>
+          <tr class="<%= row_class %>">
+            <td><%= gem_info.name %></td>
+            <td><%= gem_info.current_version %></td>
+            <td><%= gem_info.newest_version %></td>
             <td>
-              <% if gem_datum[:vulnerabilities] %>
-                Vulnerable!!
+              <% if gem_info.vulnerable? %>
+                <strong>Vulnerable</strong>
+              <% elsif gem_info.outdated? %>
+                <strong>Out of Date</strong>
+              <% elsif gem_info.current? %>
+                Up-to-Date
               <% else %>
-                Out of Date!
+                Unknown Status
               <% end %>
             </td>
             <td>
-              <% if gem_datum[:vulnerabilities] %>
-                <ul>
-                  <% gem_datum[:vulnerabilities].each do |vulnerability| %>
-                    <li>
-                      <%= vulnerability.title %>
-                      <dl>
-                        <dt>CVE</dt>
-                        <dd><%= vulnerability.cve %></dd>
-                        <dt>URL</dt>
-                        <dd><%= vulnerability.url %></dd>
-                        <dt>Patched Versions</dt>
-                        <dd><%= vulnerability.patched_versions.join(', ') %></dd>
-                      </dl>
-                    </li>
+              <div style="width:200px">
+                <% if gem_info.vulnerable? %>
+                  <% gem_info.vulnerabilities.each do |vulnerability| %>
+                    <strong><%= vulnerability.title %></strong>
+                    <dl>
+                      <dt>CVE</dt>
+                      <dd><%= vulnerability.cve %></dd>
+                      <dt>URL</dt>
+                      <dd><a href="<%= vulnerability.url %>">More Info</a></dd>
+                      <dt>Patched Versions</dt>
+                      <dd><%= vulnerability.patched_versions.join(', ') %></dd>
+                    </dl>
                   <% end %>
-                </ul>
-              <% end %>
+                <% end %>
+              </div>
             </td>
           </tr>
         <% end %>

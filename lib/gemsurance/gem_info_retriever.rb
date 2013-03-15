@@ -1,0 +1,74 @@
+module Gemsurance
+  class GemInfoRetriever
+    class GemInfo
+      STATUS_OUTDATED   = 'outdated'
+      STATUS_CURRENT    = 'current'
+      STATUS_VULNERABLE = 'vulnerable'
+      
+      attr_reader :name, :current_version, :newest_version, :vulnerabilities
+      
+      def initialize(name, current_version, newest_version, status = STATUS_CURRENT)
+        @name = name
+        @current_version = current_version
+        @newest_version = newest_version
+        @status = status
+        @vulnerabilities = []
+      end
+      
+      def add_vulnerability!(vulnerability)
+        @status = STATUS_VULNERABLE
+        @vulnerabilities << vulnerability
+      end
+      
+      def outdated?
+        @status == STATUS_OUTDATED
+      end
+      
+      def current?
+        @status == STATUS_CURRENT
+      end
+      
+      def vulnerable?
+        @status == STATUS_VULNERABLE
+      end      
+    end
+    
+    def initialize(specs, bundle_definition)
+      @specs = specs
+      @bundle_definition = bundle_definition
+    end
+    
+    def retrieve(options = {})  
+      # Bundler.ui.info ""
+      # if options["pre"]
+      #   Bundler.ui.info "Outdated gems included in the bundle (including pre-releases):"
+      # else
+      #   Bundler.ui.info "Outdated gems included in the bundle:"
+      # end
+    
+      gem_infos = []
+      
+      @specs.each do |current_spec|
+        active_spec = @bundle_definition.index[current_spec.name].sort_by { |b| b.version }
+
+        if !current_spec.version.prerelease? && !options[:pre] && active_spec.size > 1
+          active_spec = active_spec.delete_if { |b| b.respond_to?(:version) && b.version.prerelease? }
+        end
+
+        active_spec = active_spec.last
+        next if active_spec.nil?
+
+        gem_outdated = Gem::Version.new(active_spec.version) > Gem::Version.new(current_spec.version)
+        #git_outdated = current_spec.git_version != active_spec.git_version
+        if gem_outdated #|| git_outdated
+          # spec_version    = "#{active_spec.version}#{active_spec.git_version}"
+          # current_version = "#{current_spec.version}#{current_spec.git_version}"
+          gem_infos << GemInfo.new(active_spec.name, current_spec.version, active_spec.version, GemInfo::STATUS_OUTDATED)
+        else
+          gem_infos << GemInfo.new(active_spec.name, current_spec.version, current_spec.version)
+        end
+      end
+      gem_infos
+    end
+  end
+end

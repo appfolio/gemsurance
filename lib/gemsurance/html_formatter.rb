@@ -1,7 +1,7 @@
 module Gemsurance
   class HtmlFormatter
-    def initialize(gem_data)
-      @gem_data = gem_data
+    def initialize(gem_infos)
+      @gem_infos = gem_infos
     end
     
     def format
