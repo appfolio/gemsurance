@@ -1,5 +1,31 @@
 #!/usr/bin/env ruby
 
 require 'gemsurance'
+require 'optparse'
 
-Gemsurance::Runner.run
+options = {}
+
+opts = OptionParser.new do |opts|
+  opts.banner = "Usage: gemsurance [options]"
+
+  opts.separator ""
+  opts.separator "Options:"
+
+  opts.on("--pre", "Consider pre-release gem versions") do |lib|
+    options[:pre] = true
+  end
+
+  opts.on_tail("-h", "--help", "Show this help") do
+    puts opts
+    exit
+  end
+
+  opts.on_tail("--version", "Show version") do
+    puts "Gemsurance version #{Gemsurance::VERSION}"
+    exit
+  end
+end
+
+opts.parse!(ARGV)
+
+Gemsurance::Runner.new(options).run

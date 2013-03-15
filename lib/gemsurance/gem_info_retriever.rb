@@ -38,14 +38,7 @@ module Gemsurance
       @bundle_definition = bundle_definition
     end
     
-    def retrieve(options = {})  
-      # Bundler.ui.info ""
-      # if options["pre"]
-      #   Bundler.ui.info "Outdated gems included in the bundle (including pre-releases):"
-      # else
-      #   Bundler.ui.info "Outdated gems included in the bundle:"
-      # end
-    
+    def retrieve(options = {})
       gem_infos = []
       
       @specs.each do |current_spec|
