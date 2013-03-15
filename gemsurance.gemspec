@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
   s.executables               = ["gemsurance"]
 
   s.add_dependency("bundler", "~> 1.2")
+  s.add_dependency("git", "~> 1.2")
   
   s.add_development_dependency("mocha", "0.9.8")
   s.add_development_dependency("rake", "0.9.2.2")

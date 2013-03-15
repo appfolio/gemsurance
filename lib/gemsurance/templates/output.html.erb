@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf8"/>
+  <title>Gemsurance Report</title>
+</head>
+<body>
+  <div class="wrapper">
+    <h1>Gemsurance Report</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Gem Name</th>
+          <th>Actual Bundle Version</th>
+          <th>Newest Available Version</th>
+          <th>Status</th>
+          <th>Detailed Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @gem_data.each do |gem_datum| %>
+          <tr class="">
+            <td><%= gem_datum[:name] %></td>
+            <td><%= gem_datum[:current_version] %></td>
+            <td><%= gem_datum[:newest_version] %></td>
+            <td>
+              <% if gem_datum[:vulnerabilities] %>
+                Vulnerable!!
+              <% else %>
+                Out of Date!
+              <% end %>
+            </td>
+            <td>
+              <% if gem_datum[:vulnerabilities] %>
+                <ul>
+                  <% gem_datum[:vulnerabilities].each do |vulnerability| %>
+                    <li>
+                      <%= vulnerability.title %>
+                      <dl>
+                        <dt>CVE</dt>
+                        <dd><%= vulnerability.cve %></dd>
+                        <dt>URL</dt>
+                        <dd><%= vulnerability.url %></dd>
+                        <dt>Patched Versions</dt>
+                        <dd><%= vulnerability.patched_versions.join(', ') %></dd>
+                      </dl>
+                    </li>
+                  <% end %>
+                </ul>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

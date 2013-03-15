@@ -1,15 +1,43 @@
 module Gemsurance
   class Runner
-    class GemVersionData < (Struct.new(:name, :current_version, :newest_version))
-    end
-    
-    def self.run
+    def self.run(formatter = :html, output_file = 'gemsurance_report.html')
       # discover what gems are in our bundle
+      puts "Retrieving outdated gems data..."
       outdated_gems = self.outdated
-      puts outdated_gems.inspect
-      # figure out what the newest version of each is and what version we're on
       
-      # find out if there are any vulnerabilities
+      puts "Retrieving latest vulnerability data..."
+      if File.exists?('./tmp/vulnerabilities')
+        g = Git.open('./tmp/vulnerabilities')
+        g.pull
+      else
+        _ = Git.clone('https://github.com/rubysec/ruby-advisory-db', './tmp/vulnerabilities')
+      end
+      
+      puts "Parsing vulnerability data..."
+      outdated_gems.each do |gem_data|
+        vulnerability_directory = "./tmp/vulnerabilities/gems/#{gem_data[:name]}"
+        if File.exists?(vulnerability_directory)
+          Dir.foreach(vulnerability_directory) do |yaml_file|
+            next if yaml_file =~ /\A\./
+            vulnerability = Vulnerability.new(File.read(File.join(vulnerability_directory, yaml_file)))
+            # are we impacted? if so, add details to gem_data
+            current_version = gem_data[:current_version]
+            
+            unless vulnerability.patched_versions.any?{|version| Gem::Requirement.new(version).satisfied_by?(current_version)}
+              gem_data[:vulnerabilities] ||= []
+              gem_data[:vulnerabilities] << vulnerability
+            end
+          end
+        end
+      end
+      
+      puts "Generating report..."
+      output_data = Gemsurance.const_get(:"#{formatter.to_s.capitalize}Formatter").new(outdated_gems).format
+      
+      File.open(output_file, "w+") do |file|
+         file.puts output_data
+      end
+      puts "Generated report #{output_file}."
     end
   
     def self.outdated(options = {})
@@ -42,7 +70,7 @@ module Gemsurance
         if gem_outdated #|| git_outdated
           # spec_version    = "#{active_spec.version}#{active_spec.git_version}"
           # current_version = "#{current_spec.version}#{current_spec.git_version}"
-          outdated << GemVersionDate.new(active_spec.name, current_version, spec_version)
+          outdated << {:name => active_spec.name, :current_version => current_spec.version, :newest_version => active_spec.version}
         end
       end
       outdated
