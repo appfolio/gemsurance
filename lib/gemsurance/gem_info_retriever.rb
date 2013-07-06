@@ -30,7 +30,15 @@ module Gemsurance
       
       def vulnerable?
         @status == STATUS_VULNERABLE
-      end      
+      end
+
+      def ==(other)
+        @name == other.name &&
+          @current_version == other.current_version &&
+          @newest_version == other.newest_version &&
+          @status == other.instance_variable_get(:@status) &&
+          @vulnerabilities == other.vulnerabilities
+      end
     end
     
     def initialize(specs, bundle_definition)
@@ -52,10 +60,12 @@ module Gemsurance
         next if active_spec.nil?
 
         gem_outdated = Gem::Version.new(active_spec.version) > Gem::Version.new(current_spec.version)
-        #git_outdated = current_spec.git_version != active_spec.git_version
-        if gem_outdated #|| git_outdated
-          # spec_version    = "#{active_spec.version}#{active_spec.git_version}"
-          # current_version = "#{current_spec.version}#{current_spec.git_version}"
+        git_outdated = current_spec.git_version != active_spec.git_version
+
+        # TODO: handle git versions
+        # spec_version    = "#{active_spec.version}#{active_spec.git_version}"
+        # current_version = "#{current_spec.version}#{current_spec.git_version}"
+        if gem_outdated || git_outdated
           gem_infos << GemInfo.new(active_spec.name, current_spec.version, active_spec.version, GemInfo::STATUS_OUTDATED)
         else
           gem_infos << GemInfo.new(active_spec.name, current_spec.version, current_spec.version)
