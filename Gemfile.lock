@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    gemsurance (0.1.1)
+    gemsurance (0.1.2)
       bundler (~> 1.2)
       git (~> 1.2)
 

@@ -82,7 +82,7 @@ YAML
           </tr>
         
           
-          <tr class="error">
+          <tr class="danger">
             <td>dangerous</td>
             <td>8.4.7</td>
             <td>8.4.8</td>

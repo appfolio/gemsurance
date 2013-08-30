@@ -1,3 +1,5 @@
+## 0.1.2
+Fix vulnerability styling in HTML report.
 ## 0.1.1
 Inline styles in HTML report.
 ## 0.1.0
