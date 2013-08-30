@@ -7,3 +7,4 @@ require 'rubygems'
 require 'gemsurance'
 require 'test/unit'
 require "mocha/setup"
+require 'nokogiri'

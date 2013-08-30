@@ -11,7 +11,11 @@ module Gemsurance
       vulnerable_gem.add_vulnerability!(Vulnerability.new(vulnerability_yaml))
       gem_infos << vulnerable_gem
       actual_html = HtmlFormatter.new(gem_infos).format
-      assert_equal expected_html, actual_html
+
+      expected = Nokogiri::HTML(expected_html).at_css('.wrapper').to_s
+      actual = Nokogiri::HTML(actual_html).at_css('.wrapper').to_s
+
+      assert_equal expected, actual
     end
 
   private
@@ -46,22 +50,6 @@ YAML
 
     def expected_html
 <<-HTML
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf8">
-  <title>Gemsurance Report</title>
-  <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
-  <style>
-    .wrapper {
-      margin: 0 auto;
-      width: 980px;
-    }
-  </style>
-</head>
-<body>
   <div class="wrapper">
     <h1>Gemsurance Report</h1>
     <table class="table">
@@ -144,8 +132,6 @@ Remote Code Execution
       </tbody>
     </table>
   </div>
-</body>
-</html>
 HTML
     end
   end

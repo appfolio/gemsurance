@@ -1,17 +1,18 @@
 PATH
   remote: .
   specs:
-    gemsurance (0.0.1)
+    gemsurance (0.1.1)
       bundler (~> 1.2)
       git (~> 1.2)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    git (1.2.5)
+    git (1.2.6)
     metaclass (0.0.1)
     mocha (0.14.0)
       metaclass (~> 0.0.1)
+    nokogiri (1.5.9)
     rake (0.9.2.2)
 
 PLATFORMS
@@ -20,4 +21,5 @@ PLATFORMS
 DEPENDENCIES
   gemsurance!
   mocha (= 0.14.0)
+  nokogiri (= 1.5.9)
   rake (= 0.9.2.2)

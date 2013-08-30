@@ -25,4 +25,5 @@ Gem::Specification.new do |s|
   
   s.add_development_dependency("mocha", "0.14.0")
   s.add_development_dependency("rake", "0.9.2.2")
+  s.add_development_dependency("nokogiri", "1.5.9")
 end
