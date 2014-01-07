@@ -97,7 +97,7 @@ module Gemsurance
 gem: vulnerable_gem
 cve: 2013-9999
 osvdb: 9999999999
-url: http://osvdb.org/show/osvdb/9999999999
+url: http://example.org/12345
 title: |
   Terrible Vulnerability
 
