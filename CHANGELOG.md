@@ -1,3 +1,5 @@
+## 0.1.4
+Remove date from gemspec.
 ## 0.1.3
 Handle unaffected versions of gems.
 ## 0.1.2
