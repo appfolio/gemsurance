@@ -40,16 +40,24 @@ module Gemsurance
       end
     end
 
-    def add_vulnerability_data(gem_infos)
+    def add_vulnerability_data(gem_infos, vulnerabilities_directory = './tmp/vulnerabilities/gems')
       puts "Reading vulnerability data..."
       gem_infos.each do |gem_info|
-        vulnerability_directory = "./tmp/vulnerabilities/gems/#{gem_info.name}"
+        vulnerability_directory = File.join(vulnerabilities_directory, gem_info.name)
         if File.exists?(vulnerability_directory)
           Dir.foreach(vulnerability_directory) do |yaml_file|
             next if yaml_file =~ /\A\./
             vulnerability = Vulnerability.new(File.read(File.join(vulnerability_directory, yaml_file)))
+
             # are we impacted? if so, add details to gem_data
-            unless vulnerability.patched_versions.any? { |version| Gem::Requirement.new(version).satisfied_by?(gem_info.current_version) }
+            current_version_satisfies_requirement = lambda do |version|
+              Gem::Requirement.new(version.split(',')).satisfied_by?(gem_info.current_version)
+            end
+
+            current_version_is_affected = (vulnerability.unaffected_versions || []).none?(&current_version_satisfies_requirement)
+            current_version_isnt_patched = (vulnerability.patched_versions || []).none?(&current_version_satisfies_requirement)
+
+            if current_version_is_affected && current_version_isnt_patched
               gem_info.add_vulnerability!(vulnerability)
             end
           end
