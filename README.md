@@ -23,6 +23,9 @@ Gems that are up-to-date are colored green and gems that are out-of-date but wit
 
 Gemsurance exits with code 0 if there are no gems with reported vulnerabilities and code 1 if there are any such gems.
 
+### Integration into a Rails RSpec suite
+Running the gemsurance check as part of your RSpec test suite will cause an RSpec failure whenever a gem with a known vulnerability is detected in your application. This is incredibly useful if your application is tested regularly by a CI build. You can set this up by adding sample_spec/gemsurance_spec.rb to your RSpec tests.
+
 ### Command-line options
 Command-line options to the gemsurance executable are as follows:
 - --pre: Consider pre-release gem versions
