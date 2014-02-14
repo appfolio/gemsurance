@@ -29,6 +29,7 @@ Running the gemsurance check as part of your RSpec test suite will cause an RSpe
 ### Command-line options
 Command-line options to the gemsurance executable are as follows:
 - --pre: Consider pre-release gem versions
+- --output FILE: Output report to specified file
 
 ## TODOs
 - Add CSV formatter

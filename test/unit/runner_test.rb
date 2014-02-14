@@ -3,6 +3,16 @@ require 'helper'
 class RunnerTest < Test::Unit::TestCase
   # TODO add integration test
 
+  def test_output_file_option_default
+    runner = Gemsurance::Runner.new
+    assert_equal 'gemsurance_report.html', runner.instance_variable_get(:@output_file)
+  end
+
+  def test_output_file_option_custom
+    runner = Gemsurance::Runner.new(:output_file => 'custom.html')
+    assert_equal 'custom.html', runner.instance_variable_get(:@output_file)
+  end
+
   def test_add_vulnerability_data
     runner = Gemsurance::Runner.new
     gem_infos = [
