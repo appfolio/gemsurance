@@ -4,18 +4,36 @@ module Gemsurance
   class HtmlFormatterTest < Test::Unit::TestCase
     def test_format
       gem_infos = [
-        GemInfoRetriever::GemInfo.new('sweet', Gem::Version.new('1.2.3'), Gem::Version.new('1.2.3'), 'http://homepage.com', 'http://source.com', 'http://documentation.com'),
-        GemInfoRetriever::GemInfo.new('cool', Gem::Version.new('2.3.4'), Gem::Version.new('2.3.5'), nil, nil, nil, GemInfoRetriever::GemInfo::STATUS_OUTDATED)
+        GemInfoRetriever::GemInfo.new('sweet', Gem::Version.new('1.2.3'), Gem::Version.new('1.2.3'), true, 'http://homepage.com', 'http://source.com', 'http://documentation.com'),
+        GemInfoRetriever::GemInfo.new('cool', Gem::Version.new('2.3.4'), Gem::Version.new('2.3.5'), false, nil, nil, nil, GemInfoRetriever::GemInfo::STATUS_OUTDATED)
       ]
-      vulnerable_gem = GemInfoRetriever::GemInfo.new('dangerous', Gem::Version.new('8.4.7'), Gem::Version.new('8.4.8'), nil, nil, nil, GemInfoRetriever::GemInfo::STATUS_VULNERABLE)
+      vulnerable_gem = GemInfoRetriever::GemInfo.new('dangerous', Gem::Version.new('8.4.7'), Gem::Version.new('8.4.8'), false, nil, nil, nil, GemInfoRetriever::GemInfo::STATUS_VULNERABLE)
       vulnerable_gem.add_vulnerability!(Vulnerability.new(vulnerability_yaml))
       gem_infos << vulnerable_gem
-      actual_html = HtmlFormatter.new(gem_infos).format
 
-      expected = Nokogiri::HTML(expected_html).at_css('.wrapper').to_s
-      actual = Nokogiri::HTML(actual_html).at_css('.wrapper').to_s
+      html = Nokogiri::HTML(HtmlFormatter.new(gem_infos).format)
 
-      assert_equal expected, actual
+      tds = html.css('tr.warning td')
+      assert_equal 'cool', tds[0].text.strip
+      assert_equal '2.3.4', tds[1].text.strip
+      assert_equal '2.3.5', tds[2].text.strip
+      assert_equal 'Out of Date', tds[3].at('strong').text.strip
+      assert_equal '', tds[4].text.strip
+
+      tds = html.css('tr.danger td')
+      assert_equal 'dangerous', tds[0].text.strip
+      assert_equal '8.4.7', tds[1].text.strip
+      assert_equal '8.4.8', tds[2].text.strip
+      assert_equal 'Vulnerable', tds[3].at('strong').text.strip
+      assert_match /CVE.*2013-0156/m, tds[4].text.strip
+
+      tds = html.css('tr.success td')
+      assert_equal 'sweet', tds[0].at('strong').text.strip
+      assert_equal '1.2.3', tds[1].text.strip
+      assert_equal '1.2.3', tds[2].text.strip
+      assert_equal 'Up-to-Date', tds[3].text.strip
+      assert_equal '', tds[4].text.strip
+
     end
 
   private
@@ -48,113 +66,5 @@ patched_versions:
 YAML
     end
 
-    def expected_html
-<<-HTML
-<div class="wrapper">
-    <h1>Gemsurance Report</h1>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Gem Name</th>
-          <th>Bundle Version</th>
-          <th>Newest Version</th>
-          <th>Status</th>
-          <th>Detailed Status</th>
-          <th>Links</th>
-        </tr>
-      </thead>
-      <tbody>
-        
-          
-          <tr class="warning">
-            <td>cool</td>
-            <td>2.3.4</td>
-            <td>2.3.5</td>
-            <td>
-              
-                <strong>Out of Date</strong>
-              
-            </td>
-            <td>
-              <div style="width:200px">
-                
-              </div>
-            </td>
-            <td>
-              
-              
-              
-            </td>
-          </tr>
-        
-          
-          <tr class="danger">
-            <td>dangerous</td>
-            <td>8.4.7</td>
-            <td>8.4.8</td>
-            <td>
-              
-                <strong>Vulnerable</strong>
-              
-            </td>
-            <td>
-              <div style="width:200px">
-                
-                  
-                    <strong>Ruby on Rails params_parser.rb Action Pack Type Casting Parameter Parsing
-Remote Code Execution
-</strong>
-                    <dl>
-                      <dt>CVE</dt>
-                      <dd>2013-0156</dd>
-                      <dt>URL</dt>
-                      <dd><a href="http://osvdb.org/show/osvdb/89026">More Info</a></dd>
-                      <dt>Patched Versions</dt>
-                      <dd>~&gt; 2.3.15, ~&gt; 3.0.19, ~&gt; 3.1.10, &gt;= 3.2.11</dd>
-                    </dl>
-                  
-                
-              </div>
-            </td>
-            <td>
-              
-              
-              
-            </td>
-          </tr>
-        
-          
-          <tr class="success">
-            <td>sweet</td>
-            <td>1.2.3</td>
-            <td>1.2.3</td>
-            <td>
-              
-                Up-to-Date
-              
-            </td>
-            <td>
-              <div style="width:200px">
-                
-              </div>
-            </td>
-            <td>
-              
-                <a href="http://homepage.com" target="_blank" class="link homepage_uri" title="Homepage"></a>
-              
-              
-                <a href="http://source.com" target="_blank" class="link source_code_uri" title="Source"></a>
-              
-              
-                <a href="http://documentation.com" target="_blank" class="link documentation_uri" title="Docs"></a>
-              
-            </td>
-          </tr>
-        
-      </tbody>
-    </table>
-  </div>
-HTML
-    end
   end
 end

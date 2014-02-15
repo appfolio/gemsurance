@@ -23,11 +23,13 @@ module Gemsurance
     def retrieve_bundled_gem_infos
       puts "Retrieving gem version information..."
 
-      current_specs = Bundler.load.specs
+      bundler = Bundler.load
+      current_specs = bundler.specs
+      dependencies = bundler.dependencies
       definition    = Bundler.definition(true)
       definition.resolve_remotely!
 
-      GemInfoRetriever.new(current_specs, definition).retrieve(:pre => @options[:pre])
+      GemInfoRetriever.new(current_specs, dependencies, definition).retrieve(:pre => @options[:pre])
     end
 
     def retrieve_vulnerability_data
