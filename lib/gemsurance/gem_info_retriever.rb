@@ -5,12 +5,13 @@ module Gemsurance
       STATUS_CURRENT    = 'current'
       STATUS_VULNERABLE = 'vulnerable'
       
-      attr_reader :name, :current_version, :newest_version, :vulnerabilities
+      attr_reader :name, :current_version, :newest_version, :in_gem_file, :vulnerabilities
       
-      def initialize(name, current_version, newest_version, status = STATUS_CURRENT)
+      def initialize(name, current_version, newest_version, in_gem_file, status = STATUS_CURRENT)
         @name = name
         @current_version = current_version
         @newest_version = newest_version
+        @in_gem_file = in_gem_file
         @status = status
         @vulnerabilities = []
       end
@@ -41,8 +42,9 @@ module Gemsurance
       end
     end
     
-    def initialize(specs, bundle_definition)
+    def initialize(specs, dependencies, bundle_definition)
       @specs = specs
+      @dependencies = dependencies
       @bundle_definition = bundle_definition
     end
     
@@ -65,10 +67,11 @@ module Gemsurance
         # TODO: handle git versions
         # spec_version    = "#{active_spec.version}#{active_spec.git_version}"
         # current_version = "#{current_spec.version}#{current_spec.git_version}"
+        in_gem_file = @dependencies.any?{|d| d.name == active_spec.name}
         if gem_outdated || git_outdated
-          gem_infos << GemInfo.new(active_spec.name, current_spec.version, active_spec.version, GemInfo::STATUS_OUTDATED)
+          gem_infos << GemInfo.new(active_spec.name, current_spec.version, active_spec.version, in_gem_file, GemInfo::STATUS_OUTDATED)
         else
-          gem_infos << GemInfo.new(active_spec.name, current_spec.version, current_spec.version)
+          gem_infos << GemInfo.new(active_spec.name, current_spec.version, current_spec.version, in_gem_file)
         end
       end
       gem_infos
