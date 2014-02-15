@@ -734,6 +734,18 @@
       margin: 0 auto;
       width: 980px;
     }
+
+    a.link {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Images are from http://ionicons.com: home, code, document */
+    a.link.homepage_uri { background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAVFBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8UXluqAAAAGnRSTlMABANvWfBB4i3SHb4RpwJw7heQ4H+PHOMPH4aZIH0AAAABYktHRBsCYNSkAAAAaUlEQVQY032MWQ6AIAwFQQRXNkHRd/+DqghRYnQ+ms4kLSEfUFp6xVhVhJrz+umiARpxe9vhoGuz9wMiQ3/5KJGQ4+lKmxyMVmewE8Cd48BkVbzxwLwsM+DTUx9X/xN0CDrPyLpta55vdqg9CJWGTyKrAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE0LTAyLTE0VDE1OjEzOjM0LTA4OjAwwk+TXgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxNC0wMi0xNFQxNToxMzozNC0wODowMLMSK+IAAAAASUVORK5CYII="); }
+    a.link.source_code_uri { background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAKlBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8KreiaAAAADXRSTlMAF1gKCxSknQmjoKkTWOJM+wAAAAFiS0dEDfa0YfUAAAA1SURBVAjXY2AgCjAqOwmAGWEV7akgmnVaAGtmAJDRtYeB4fQKZAbrzAAgQlbMwKgC1U4QAAC8eg1ZB0rLqAAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxNC0wMi0xNFQxNToxMzoxMS0wODowMNJSu4QAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTQtMDItMTRUMTU6MTM6MTEtMDg6MDCjDwM4AAAAAElFTkSuQmCC"); }
+    a.link.documentation_uri { background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAe1BMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///+9xjqiAAAAKHRSTlMABhweElzPwdDFM3+XICOI5b4pgIZ5krZuypbsd7yFlR8bj1vSYwcIhjGo+AAAAAFiS0dEKL2wtbIAAABfSURBVBjTY2DAAhiZmIGABSHAysbOzs7ByQUX4Obh5ePlFxAUggkIiwAJUTFucWZkAQlJKWkZZAEmCRlZOWQBJJoqAtzyTApAoKgEE1DmYAcDFVWogJoCHxjwqmPzOgD1bAZ9iN52VAAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxNC0wMi0xNFQxNToxOTozNy0wODowMOSFGQoAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTQtMDItMTRUMTU6MTk6MzctMDg6MDCV2KG2AAAAAElFTkSuQmCC"); }
+
   </style>
 </head>
 <body>
@@ -747,6 +759,7 @@
           <th>Newest Version</th>
           <th>Status</th>
           <th>Detailed Status</th>
+          <th>Links</th>
         </tr>
       </thead>
       <tbody>
@@ -793,6 +806,17 @@
                   <% end %>
                 <% end %>
               </div>
+            </td>
+            <td>
+              <% unless gem_info.homepage_uri.to_s.empty? %>
+                <a href="<%= gem_info.homepage_uri %>" target="_blank" class="link homepage_uri" title="Homepage"></a>
+              <% end %>
+              <% unless gem_info.source_code_uri.to_s.empty? %>
+                <a href="<%= gem_info.source_code_uri %>" target="_blank" class="link source_code_uri" title="Source"></a>
+              <% end %>
+              <% unless gem_info.documentation_uri.to_s.empty? %>
+                <a href="<%= gem_info.documentation_uri %>" target="_blank" class="link documentation_uri" title="Docs"></a>
+              <% end %>
             </td>
           </tr>
         <% end %>

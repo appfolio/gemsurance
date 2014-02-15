@@ -3,7 +3,7 @@ require 'helper'
 module Gemsurance
   class GemInfoRetrieverTest < Test::Unit::TestCase
     def test_gem_info_functionality
-      current_gem_info = GemInfoRetriever::GemInfo.new('current_gem', Gem::Version.new('3.0.2'), Gem::Version.new('3.0.2'))
+      current_gem_info = GemInfoRetriever::GemInfo.new('current_gem', Gem::Version.new('3.0.2'), Gem::Version.new('3.0.2'), nil, nil, nil)
       assert current_gem_info.current?
       assert ! current_gem_info.outdated?
       assert ! current_gem_info.vulnerable?
@@ -12,7 +12,7 @@ module Gemsurance
       assert_equal Gem::Version.new('3.0.2'), current_gem_info.newest_version
       assert_equal [], current_gem_info.vulnerabilities
 
-      outdated_gem_info = GemInfoRetriever::GemInfo.new('old_gem', Gem::Version.new('2.0.7'), Gem::Version.new('5.1.2'), GemInfoRetriever::GemInfo::STATUS_OUTDATED)
+      outdated_gem_info = GemInfoRetriever::GemInfo.new('old_gem', Gem::Version.new('2.0.7'), Gem::Version.new('5.1.2'), nil, nil, nil, GemInfoRetriever::GemInfo::STATUS_OUTDATED)
       assert ! outdated_gem_info.current?
       assert outdated_gem_info.outdated?
       assert ! outdated_gem_info.vulnerable?
@@ -21,7 +21,7 @@ module Gemsurance
       assert_equal Gem::Version.new('5.1.2'), outdated_gem_info.newest_version
       assert_equal [], outdated_gem_info.vulnerabilities
 
-      vulnerable_gem_info = GemInfoRetriever::GemInfo.new('vulnerable_gem', Gem::Version.new('4.5.3'), Gem::Version.new('4.5.4'), GemInfoRetriever::GemInfo::STATUS_VULNERABLE)
+      vulnerable_gem_info = GemInfoRetriever::GemInfo.new('vulnerable_gem', Gem::Version.new('4.5.3'), Gem::Version.new('4.5.4'), nil, nil, nil, GemInfoRetriever::GemInfo::STATUS_VULNERABLE)
       vulnerability = Vulnerability.new(vulnerability_yaml)
       vulnerable_gem_info.add_vulnerability!(vulnerability)
       assert ! vulnerable_gem_info.current?
@@ -33,29 +33,36 @@ module Gemsurance
       assert_equal [vulnerability], vulnerable_gem_info.vulnerabilities
     end
 
+    def test_gem_info_uris
+      current_gem_info = GemInfoRetriever::GemInfo.new('current_gem', Gem::Version.new('3.0.2'), Gem::Version.new('3.0.2'), 'http://homepage.com', 'http://source.com', 'http://documentation.com')
+      assert_equal 'http://homepage.com', current_gem_info.homepage_uri
+      assert_equal 'http://source.com', current_gem_info.source_code_uri
+      assert_equal 'http://documentation.com', current_gem_info.documentation_uri
+    end
+
     def test_gem_info_equality
       vulnerability = Vulnerability.new(vulnerability_yaml)
-      gem_info_1 = GemInfoRetriever::GemInfo.new('vulnerable_gem', Gem::Version.new('1.2.3'), Gem::Version.new('4.5.6'), GemInfoRetriever::GemInfo::STATUS_VULNERABLE)
+      gem_info_1 = GemInfoRetriever::GemInfo.new('vulnerable_gem', Gem::Version.new('1.2.3'), Gem::Version.new('4.5.6'), nil, nil, nil, GemInfoRetriever::GemInfo::STATUS_VULNERABLE)
       gem_info_1.add_vulnerability!(vulnerability)
 
-      gem_info_2 = GemInfoRetriever::GemInfo.new('vulnerable_gem', Gem::Version.new('1.2.3'), Gem::Version.new('4.5.6'), GemInfoRetriever::GemInfo::STATUS_VULNERABLE)
+      gem_info_2 = GemInfoRetriever::GemInfo.new('vulnerable_gem', Gem::Version.new('1.2.3'), Gem::Version.new('4.5.6'), nil, nil, nil, GemInfoRetriever::GemInfo::STATUS_VULNERABLE)
       gem_info_2.add_vulnerability!(vulnerability)
 
       assert_equal gem_info_1, gem_info_2
 
-      gem_info_3 = GemInfoRetriever::GemInfo.new('vulnerable_gem', Gem::Version.new('1.2.3'), Gem::Version.new('4.5.6'), GemInfoRetriever::GemInfo::STATUS_VULNERABLE)
+      gem_info_3 = GemInfoRetriever::GemInfo.new('vulnerable_gem', Gem::Version.new('1.2.3'), Gem::Version.new('4.5.6'), nil, nil, nil, GemInfoRetriever::GemInfo::STATUS_VULNERABLE)
       assert_not_equal gem_info_2, gem_info_3
 
-      gem_info_4 = GemInfoRetriever::GemInfo.new('foo', Gem::Version.new('1.2.3'), Gem::Version.new('4.5.6'), GemInfoRetriever::GemInfo::STATUS_VULNERABLE)
+      gem_info_4 = GemInfoRetriever::GemInfo.new('foo', Gem::Version.new('1.2.3'), Gem::Version.new('4.5.6'), nil, nil, nil, GemInfoRetriever::GemInfo::STATUS_VULNERABLE)
       assert_not_equal gem_info_2, gem_info_4
 
-      gem_info_5 = GemInfoRetriever::GemInfo.new('vulnerable_gem', Gem::Version.new('1.2.4'), Gem::Version.new('4.5.6'), GemInfoRetriever::GemInfo::STATUS_VULNERABLE)
+      gem_info_5 = GemInfoRetriever::GemInfo.new('vulnerable_gem', Gem::Version.new('1.2.4'), Gem::Version.new('4.5.6'), nil, nil, nil, GemInfoRetriever::GemInfo::STATUS_VULNERABLE)
       assert_not_equal gem_info_2, gem_info_5
 
-      gem_info_6 = GemInfoRetriever::GemInfo.new('vulnerable_gem', Gem::Version.new('1.2.3'), Gem::Version.new('4.5.7'), GemInfoRetriever::GemInfo::STATUS_VULNERABLE)
+      gem_info_6 = GemInfoRetriever::GemInfo.new('vulnerable_gem', Gem::Version.new('1.2.3'), Gem::Version.new('4.5.7'), nil, nil, nil, GemInfoRetriever::GemInfo::STATUS_VULNERABLE)
       assert_not_equal gem_info_2, gem_info_6
 
-      gem_info_7 = GemInfoRetriever::GemInfo.new('vulnerable_gem', Gem::Version.new('1.2.3'), Gem::Version.new('4.5.6'), GemInfoRetriever::GemInfo::STATUS_CURRENT)
+      gem_info_7 = GemInfoRetriever::GemInfo.new('vulnerable_gem', Gem::Version.new('1.2.3'), Gem::Version.new('4.5.6'), nil, nil, nil, GemInfoRetriever::GemInfo::STATUS_CURRENT)
       assert_not_equal gem_info_2, gem_info_7
     end
 
@@ -78,14 +85,14 @@ module Gemsurance
       retriever = GemInfoRetriever.new(current_specs, definition_mock)
       gems = retriever.retrieve
       assert_equal [
-        GemInfoRetriever::GemInfo.new('rake', Gem::Version.new('0.9.2.2'), Gem::Version.new('10.0.2'), GemInfoRetriever::GemInfo::STATUS_OUTDATED),
-        GemInfoRetriever::GemInfo.new('bundler', Gem::Version.new('1.3.5'), Gem::Version.new('1.3.5'), GemInfoRetriever::GemInfo::STATUS_CURRENT)
+        GemInfoRetriever::GemInfo.new('rake', Gem::Version.new('0.9.2.2'), Gem::Version.new('10.0.2'), nil, nil, nil, GemInfoRetriever::GemInfo::STATUS_OUTDATED),
+        GemInfoRetriever::GemInfo.new('bundler', Gem::Version.new('1.3.5'), Gem::Version.new('1.3.5'), nil, nil, nil, GemInfoRetriever::GemInfo::STATUS_CURRENT)
       ], gems
 
       gems_with_prerelease = retriever.retrieve(:pre => true)
       assert_equal [
-        GemInfoRetriever::GemInfo.new('rake', Gem::Version.new('0.9.2.2'), Gem::Version.new('10.0.3pre'), GemInfoRetriever::GemInfo::STATUS_OUTDATED),
-        GemInfoRetriever::GemInfo.new('bundler', Gem::Version.new('1.3.5'), Gem::Version.new('1.3.6pre'), GemInfoRetriever::GemInfo::STATUS_OUTDATED)
+        GemInfoRetriever::GemInfo.new('rake', Gem::Version.new('0.9.2.2'), Gem::Version.new('10.0.3pre'), nil, nil, nil, GemInfoRetriever::GemInfo::STATUS_OUTDATED),
+        GemInfoRetriever::GemInfo.new('bundler', Gem::Version.new('1.3.5'), Gem::Version.new('1.3.6pre'), nil, nil, nil, GemInfoRetriever::GemInfo::STATUS_OUTDATED)
       ], gems_with_prerelease
     end
 
