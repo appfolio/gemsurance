@@ -1,3 +1,7 @@
+## 0.2.0
+Add example RSpec spec.
+Add --output option to specify output filename.
+Add homepage, code, and docs links for gems in HTML report, if available.
 ## 0.1.4
 Remove date from gemspec.
 ## 0.1.3
