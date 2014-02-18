@@ -5,14 +5,19 @@ module Gemsurance
       STATUS_CURRENT    = 'current'
       STATUS_VULNERABLE = 'vulnerable'
       
-      attr_reader :name, :current_version, :newest_version, :vulnerabilities
+      attr_reader :name, :current_version, :newest_version, :vulnerabilities,
+                  :homepage_uri, :source_code_uri, :documentation_uri
       
-      def initialize(name, current_version, newest_version, status = STATUS_CURRENT)
+      def initialize(name, current_version, newest_version, homepage_uri, source_code_uri, documentation_uri, status = STATUS_CURRENT)
         @name = name
         @current_version = current_version
         @newest_version = newest_version
+        @homepage_uri = homepage_uri
+        @documentation_uri = documentation_uri
+        @source_code_uri = source_code_uri
         @status = status
         @vulnerabilities = []
+        
       end
       
       def add_vulnerability!(vulnerability)
@@ -62,13 +67,18 @@ module Gemsurance
         gem_outdated = Gem::Version.new(active_spec.version) > Gem::Version.new(current_spec.version)
         git_outdated = current_spec.git_version != active_spec.git_version
 
+        info = ::Gems.info(active_spec.name)
+        homepage_uri      = info['homepage_uri']
+        documentation_uri = info['documentation_uri']
+        source_code_uri   = info['source_code_uri']
+
         # TODO: handle git versions
         # spec_version    = "#{active_spec.version}#{active_spec.git_version}"
         # current_version = "#{current_spec.version}#{current_spec.git_version}"
         if gem_outdated || git_outdated
-          gem_infos << GemInfo.new(active_spec.name, current_spec.version, active_spec.version, GemInfo::STATUS_OUTDATED)
+          gem_infos << GemInfo.new(active_spec.name, current_spec.version, active_spec.version, homepage_uri, documentation_uri, source_code_uri, GemInfo::STATUS_OUTDATED)
         else
-          gem_infos << GemInfo.new(active_spec.name, current_spec.version, current_spec.version)
+          gem_infos << GemInfo.new(active_spec.name, current_spec.version, current_spec.version, homepage_uri, documentation_uri, source_code_uri)
         end
       end
       gem_infos

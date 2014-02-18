@@ -1,6 +1,7 @@
 require 'bundler'
 require 'git'
 require 'erb'
+require 'gems'
 
 require 'gemsurance/gem_info_retriever'
 require 'gemsurance/html_formatter'

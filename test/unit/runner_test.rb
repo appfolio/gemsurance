@@ -20,6 +20,9 @@ class RunnerTest < Test::Unit::TestCase
         'actionpack',
         Gem::Version.new('3.2.14'),
         Gem::Version.new('4.0.2'),
+        'http://homepage.com',
+        'http://source.com',
+        'http://documentation.com',
         Gemsurance::GemInfoRetriever::GemInfo::STATUS_OUTDATED
       )
     ]
