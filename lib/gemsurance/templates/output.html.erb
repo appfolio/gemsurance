@@ -751,6 +751,7 @@
 <body>
   <div class="wrapper">
     <h1>Gemsurance Report</h1>
+    <p>Gems in bold appear in the Gemfile. Other gems appear in Gemfile.lock.</p>
     <table class="table">
       <thead>
         <tr>
@@ -776,7 +777,13 @@
              end
           %>
           <tr class="<%= row_class %>">
-            <td><%= gem_info.name %></td>
+            <td>
+              <% if gem_info.in_gem_file %>
+                <strong><%= gem_info.name %></strong>
+              <% else %>
+                <%= gem_info.name %>
+              <% end %>
+            </td>
             <td><%= gem_info.current_version %></td>
             <td><%= gem_info.newest_version %></td>
             <td>
