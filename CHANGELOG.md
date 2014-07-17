@@ -1,3 +1,5 @@
+## 0.3.0
+Display Gemfile gems in bold in the report.
 ## 0.2.0
 Add example RSpec spec.
 Add --output option to specify output filename.
