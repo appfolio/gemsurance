@@ -30,6 +30,7 @@ Running the gemsurance check as part of your RSpec test suite will cause an RSpe
 Command-line options to the gemsurance executable are as follows:
 - --pre: Consider pre-release gem versions
 - --output FILE: Output report to specified file
+- --format FORMAT: Output report to specified format (html & yml available). Html by default.
 
 ## TODOs
 - Add CSV formatter

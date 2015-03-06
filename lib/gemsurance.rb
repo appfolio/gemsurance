@@ -5,6 +5,7 @@ require 'gems'
 
 require 'gemsurance/gem_info_retriever'
 require 'gemsurance/html_formatter'
+require 'gemsurance/yml_formatter'
 require 'gemsurance/runner'
 require 'gemsurance/version'
 require 'gemsurance/vulnerability'
