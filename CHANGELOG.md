@@ -1,3 +1,5 @@
+## 0.3.1
+Fix command-line options parsing (@bencolon).
 ## 0.3.0
 Display Gemfile gems in bold in the report.
 ## 0.2.0
