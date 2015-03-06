@@ -3,5 +3,5 @@
 require 'gemsurance'
 require 'gemsurance/cli'
 
-options = Gemsurance::Cli.parse(ARGV)
+options = Gemsurance::Cli.parse(*ARGV)
 Gemsurance::Runner.new(options).run
