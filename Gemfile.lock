@@ -15,7 +15,10 @@ GEM
     mocha (0.14.0)
       metaclass (~> 0.0.1)
     nokogiri (1.5.9)
+    power_assert (0.2.2)
     rake (0.9.2.2)
+    test-unit (3.0.9)
+      power_assert
 
 PLATFORMS
   ruby
@@ -25,3 +28,4 @@ DEPENDENCIES
   mocha (= 0.14.0)
   nokogiri (= 1.5.9)
   rake (= 0.9.2.2)
+  test-unit (= 3.0.9)
