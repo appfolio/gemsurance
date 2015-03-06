@@ -21,6 +21,10 @@ module Gemsurance
             options[:output_file] = file
           end
 
+          opts.on("--format FORMAT", "Output report to given format (html & yml available). Html by default.") do |format|
+            options[:formatter] = format
+          end
+
           opts.on_tail("-h", "--help", "Show this help") do
             puts opts
             exit
