@@ -764,7 +764,7 @@
         </tr>
       </thead>
       <tbody>
-        <% @gem_infos.sort { |a, b| a.name.downcase <=> b.name.downcase }.each do |gem_info| %>
+        <% sorted_gems.each do |gem_info| %>
           <%
              row_class = if gem_info.current?
                'success'

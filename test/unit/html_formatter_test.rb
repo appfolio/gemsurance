@@ -11,7 +11,7 @@ module Gemsurance
       vulnerable_gem.add_vulnerability!(Vulnerability.new(vulnerability_yaml))
       gem_infos << vulnerable_gem
 
-      html = Nokogiri::HTML(HtmlFormatter.new(gem_infos).format)
+      html = Nokogiri::HTML(Formatters::Html.new(gem_infos).format)
 
       tds = html.css('tr.warning td')
       assert_equal 'cool', tds[0].text.strip
