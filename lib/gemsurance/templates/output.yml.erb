@@ -12,7 +12,7 @@
   <%- else -%>
   status: unknown
   <%- end -%>
-  details_status:
+  vulnerabilities:
   <%- gem_info.vulnerabilities.each do |vulnerability| -%>
     - title: '<%= vulnerability.title %>'
       cve: <%= vulnerability.cve %>
