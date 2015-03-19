@@ -1,0 +1,25 @@
+<%- sorted_gems.each do |gem_info| -%>
+<%= gem_info.name %>:
+  in_gem_file: <%= gem_info.in_gem_file %>
+  bundle_version: <%= gem_info.current_version %>
+  newest_version: <%= gem_info.newest_version %>
+  <%- if gem_info.vulnerable? -%>
+  status: vulnerable
+  <%- elsif gem_info.outdated? -%>
+  status: outofdate
+  <%- elsif gem_info.current? -%>
+  status: uptodate
+  <%- else -%>
+  status: unknown
+  <%- end -%>
+  vulnerabilities:
+  <%- gem_info.vulnerabilities.each do |vulnerability| -%>
+    - title: '<%= vulnerability.title %>'
+      cve: <%= vulnerability.cve %>
+      url: <%= vulnerability.url %>
+      patched_versions: <%= (vulnerability.patched_versions || []).join(', ') %>
+  <%- end -%>
+  homepage_url: <%= gem_info.homepage_uri %>
+  source_code_url: <%= gem_info.source_code_uri %>
+  documentation_url: <%= gem_info.documentation_uri %>
+<%- end -%>

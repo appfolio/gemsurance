@@ -2,7 +2,7 @@ module Gemsurance
   class Runner
     def initialize(options = {})
       @formatter   = options.delete(:formatter) || :html
-      @output_file = options.delete(:output_file) || 'gemsurance_report.html'
+      @output_file = options.delete(:output_file) || "gemsurance_report.#{@formatter}"
       @options     = options
     end
 
@@ -69,7 +69,7 @@ module Gemsurance
 
     def generate_report(gem_infos)
       puts "Generating report..."
-      output_data = Gemsurance.const_get(:"#{@formatter.to_s.capitalize}Formatter").new(gem_infos).format
+      output_data = Gemsurance::Formatters.const_get(:"#{@formatter.to_s.capitalize}").new(gem_infos).format
 
       File.open(@output_file, "w+") do |file|
         file.puts output_data
