@@ -1,3 +1,5 @@
+## 0.4.0
+Add YAML output formatter (@bencolon).
 ## 0.3.1
 Fix command-line options parsing (@bencolon).
 ## 0.3.0
