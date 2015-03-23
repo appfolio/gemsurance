@@ -1,0 +1,13 @@
+language: ruby
+script: bundle exec rake test:units
+
+rvm:
+  - 2.2
+  - 2.1
+  - 2.0.0
+  - 1.9.3
+  - ruby-head
+
+matrix:
+  allow_failures:
+    - rvm: ruby-head

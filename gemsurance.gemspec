@@ -5,7 +5,8 @@ Gem::Specification.new do |s|
   s.name                      = "gemsurance"
   s.version                   = Gemsurance::VERSION
 
-  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
+  s.required_ruby_version     = '>= 1.9.3'
+  s.required_rubygems_version = '>= 1.8.11'
   s.authors                   = ["Jon Kessler"]
   s.description               = "Gem vulnerability and version checker"
   s.email                     = "jon.kessler@appfolio.com"
@@ -13,7 +14,6 @@ Gem::Specification.new do |s|
   s.homepage                  = "http://github.com/appfolio/gemsurance"
   s.licenses                  = ["MIT"]
   s.require_paths             = ["lib"]
-  s.rubygems_version          = "1.8.24"
   s.summary                   = "Your Gem Insurance Policy"
 
   s.files                     = `git ls-files -- bin lib`.split("\n")
