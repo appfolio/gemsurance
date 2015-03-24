@@ -1,3 +1,7 @@
+## 0.5.0
+Set up Travis.
+Add test-unit dependency (needed for Ruby 2.2+) (@bencolon).
+Add public access to gem infos (@bencolon).
 ## 0.4.0
 Add YAML output formatter (@bencolon).
 ## 0.3.1

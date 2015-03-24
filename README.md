@@ -1,4 +1,4 @@
-[![Build Status](https://api.travis-ci.org/appfolio/gemsurance.svg?branch=master)](http://travis-ci.org/appfolio/gemsurance)
+[![Build Status](https://api.travis-ci.org/appfolio/gemsurance.svg?branch=master)](http://travis-ci.org/appfolio/gemsurance) [![Gem Version](https://badge.fury.io/rb/gemsurance.svg)](http://badge.fury.io/rb/gemsurance)
 # Gemsurance: Insurance for your Gems
 
 Gemsurance is a tool for monitoring if any of your Ruby Gems are out-of-date or vulnerable. It uses [Bundler](https://github.com/bundler/bundler) and the [Ruby Advisory Database](https://github.com/rubysec/ruby-advisory-db) to do so. It's similar to bundler-audit, but outputs an HTML report and determines which gems are out-of-date as well.
