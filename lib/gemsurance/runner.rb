@@ -38,10 +38,8 @@ module Gemsurance
       bundler = Bundler.load
       current_specs = bundler.specs
       dependencies = bundler.dependencies
-      definition = Bundler.definition(true)
-      definition.resolve_remotely!
 
-      GemInfoRetriever.new(current_specs, dependencies, definition).retrieve(:pre => @options[:pre])
+      GemInfoRetriever.new(current_specs, dependencies).retrieve(:pre => @options[:pre])
     end
 
     def retrieve_vulnerability_data

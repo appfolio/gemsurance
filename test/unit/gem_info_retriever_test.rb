@@ -69,20 +69,27 @@ module Gemsurance
     def test_retrieve
       current_specs = Bundler::SpecSet.new([Gem::Specification.new('rake', '0.9.2.2'),
                                             Gem::Specification.new('bundler', '1.3.5')])
-      index = Bundler::Index.new
-      rake_versions = %w(0.9.2 0.9.2.1 0.9.2.2 10.0.1 10.0.2 10.0.3pre)
-      rake_versions.each do |version|
-        index << Gem::Specification.new('rake', version)
-      end
-      bundler_versions = %w(1.2.3 1.2.4 1.2.5 1.2.6 1.3.0 1.3.3 1.3.5 1.3.6pre)
-      bundler_versions.each do |version|
-        index << Gem::Specification.new('bundler', version)
-      end
 
-      definition_mock = mock
-      definition_mock.stubs(:index).returns(index)
+      ::Gems.stubs(:versions).with('rake').returns([
+        { :number => "0.9.2", :prerelease => false },
+        { :number => "0.9.2.1", :prerelease => false },
+        { :number => "0.9.2.2", :prerelease => false },
+        { :number => "10.0.1", :prerelease => false },
+        { :number => "10.0.2", :prerelease => false },
+        { :number => "10.0.3pre", :prerelease => true }
+      ])
+      ::Gems.stubs(:versions).with('bundler').returns([
+        { :number => "1.2.3", :prerelease => false },
+        { :number => "1.2.4", :prerelease => false },
+        { :number => "1.2.5", :prerelease => false },
+        { :number => "1.2.6", :prerelease => false },
+        { :number => "1.3.0", :prerelease => false },
+        { :number => "1.3.3", :prerelease => false },
+        { :number => "1.3.5", :prerelease => false },
+        { :number => "1.3.6pre", :prerelease => true }
+      ])
 
-      retriever = GemInfoRetriever.new(current_specs, [], definition_mock)
+      retriever = GemInfoRetriever.new(current_specs, [])
       gems = retriever.retrieve
       assert_equal [
         GemInfoRetriever::GemInfo.new('rake', Gem::Version.new('0.9.2.2'), Gem::Version.new('10.0.2'), false, nil, nil, nil, GemInfoRetriever::GemInfo::STATUS_OUTDATED),
