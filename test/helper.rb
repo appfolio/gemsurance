@@ -9,6 +9,8 @@ require 'test/unit'
 require "mocha/setup"
 require 'nokogiri'
 
+Kernel.send(:define_method, :puts) { |*args| "" }
+
 class Test::Unit::TestCase
   def generate_gem_infos
     @gem_infos = [

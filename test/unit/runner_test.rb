@@ -14,8 +14,6 @@ class RunnerTest < Test::Unit::TestCase
   end
 
   def test_report_without_previous_run
-    stubs_puts
-
     runner = Gemsurance::Runner.new
     assert_raise SystemExit do
       runner.report
@@ -45,6 +43,28 @@ class RunnerTest < Test::Unit::TestCase
     end
   end
 
+  def test_run_with_not_frozen_bundler
+    runner = Gemsurance::Runner.new
+    stub_external_calls(runner)
+
+    Bundler.settings.expects(:set_local).never
+
+    runner.run
+  end
+
+  def test_run_with_frozen_bundler
+    runner = Gemsurance::Runner.new
+    stub_external_calls(runner)
+
+    Bundler.settings.set_local(:frozen, "1")
+    Bundler.settings.expects(:set_local).twice
+
+    runner.run
+  ensure
+    Bundler.settings.unstub(:set_local)
+    Bundler.settings.set_local(:frozen, "0")
+  end
+
   def test_report_without_vulnerabilities
     runner = Gemsurance::Runner.new
 
@@ -56,8 +76,6 @@ class RunnerTest < Test::Unit::TestCase
   end
 
   def test_add_vulnerability_data
-    stubs_puts
-
     runner = Gemsurance::Runner.new
     gem_infos = [
       Gemsurance::GemInfoRetriever::GemInfo.new(
@@ -82,8 +100,10 @@ class RunnerTest < Test::Unit::TestCase
   end
 
   private
-
-  def stubs_puts
-    Kernel.send(:define_method, :puts) { |*args| "" }
-  end
+    def stub_external_calls(runner)
+      runner.stubs(:retrieve_vulnerability_data)
+      runner.stubs(:add_vulnerability_data)
+      Bundler::Definition.any_instance.stubs(:resolve_remotely!)
+      Gemsurance::GemInfoRetriever.any_instance.stubs(:retrieve)
+    end
 end

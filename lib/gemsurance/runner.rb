@@ -38,10 +38,8 @@ module Gemsurance
       bundler = Bundler.load
       current_specs = bundler.specs
       dependencies = bundler.dependencies
-      definition = Bundler.definition(true)
-      definition.resolve_remotely!
 
-      GemInfoRetriever.new(current_specs, dependencies, definition).retrieve(:pre => @options[:pre])
+      GemInfoRetriever.new(current_specs, dependencies, resolved_definition).retrieve(:pre => @options[:pre])
     end
 
     def retrieve_vulnerability_data
@@ -90,6 +88,21 @@ module Gemsurance
         file.puts output_data
       end
       puts "Generated report #{@output_file}."
+    end
+
+    def resolved_definition
+      # Need to temporarily unfrozen Bundler (when the gems have been installed with --deployment option e.g.)
+      if Bundler.settings[:frozen]
+        unfrozen_bundler = true
+        Bundler.settings.set_local(:frozen, "0")
+      end
+
+      Bundler.definition(true).tap do |definition|
+        definition.resolve_remotely!
+      end
+
+    ensure
+      Bundler.settings.set_local(:frozen, "1") if unfrozen_bundler
     end
   end
 end
