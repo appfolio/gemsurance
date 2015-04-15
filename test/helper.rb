@@ -9,9 +9,12 @@ require 'test/unit'
 require "mocha/setup"
 require 'nokogiri'
 
-Kernel.send(:define_method, :puts) { |*args| "" }
-
 class Test::Unit::TestCase
+
+  def setup
+    $stdout.stubs(:puts)
+  end
+
   def generate_gem_infos
     @gem_infos = [
       Gemsurance::GemInfoRetriever::GemInfo.new('sweet', Gem::Version.new('1.2.3'), Gem::Version.new('1.2.3'), true, 'http://homepage.com', 'http://source.com', 'http://documentation.com'),
