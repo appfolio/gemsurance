@@ -1,3 +1,5 @@
+## 0.6.0
+Support bundled gems in deployment mode (@bencolon).
 ## 0.5.0
 Set up Travis.
 Add test-unit dependency (needed for Ruby 2.2+) (@bencolon).
