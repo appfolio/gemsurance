@@ -5,6 +5,7 @@ module Gemsurance
     def initialize(options = {})
       @formatter   = options.delete(:formatter) || :html
       @output_file = options.delete(:output_file) || "gemsurance_report.#{@formatter}"
+      @config_file = options.delete(:config_file) || ".gemsurance.yml"
       @options     = options
     end
 
@@ -25,6 +26,9 @@ module Gemsurance
 
   private
     def build_gem_infos
+      if File.exists?(@config_file)
+        @config = YAML::load(File.read(@config_file))
+      end
       @gem_infos = retrieve_bundled_gem_infos
       retrieve_vulnerability_data
       add_vulnerability_data
@@ -56,6 +60,7 @@ module Gemsurance
     def add_vulnerability_data(vulnerabilities_directory = './tmp/vulnerabilities/gems')
       puts "Reading vulnerability data..."
 
+
       @gem_infos.each do |gem_info|
         vulnerability_directory = File.join(vulnerabilities_directory, gem_info.name)
         if File.exists?(vulnerability_directory)
@@ -70,8 +75,13 @@ module Gemsurance
 
             current_version_is_affected = (vulnerability.unaffected_versions || []).none?(&current_version_satisfies_requirement)
             current_version_isnt_patched = (vulnerability.patched_versions || []).none?(&current_version_satisfies_requirement)
+            current_version_isnt_patched_manually = if manual_patches = get_manually_patched_versions_for(gem_info.name, vulnerability.cve)
+              (manual_patches || []).none?(&current_version_satisfies_requirement)
+            else
+              true
+            end
 
-            if current_version_is_affected && current_version_isnt_patched
+            if current_version_is_affected && current_version_isnt_patched && current_version_isnt_patched_manually
               gem_info.add_vulnerability!(vulnerability)
             end
           end
@@ -88,6 +98,12 @@ module Gemsurance
         file.puts output_data
       end
       puts "Generated report #{@output_file}."
+    end
+
+    def get_manually_patched_versions_for(gem, cve)
+      if patches = @config && @config['manually_patched_versions']
+        patches[gem] && patches[gem][cve]
+      end
     end
 
     def resolved_definition
