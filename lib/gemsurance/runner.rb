@@ -60,7 +60,6 @@ module Gemsurance
     def add_vulnerability_data(vulnerabilities_directory = './tmp/vulnerabilities/gems')
       puts "Reading vulnerability data..."
 
-
       @gem_infos.each do |gem_info|
         vulnerability_directory = File.join(vulnerabilities_directory, gem_info.name)
         if File.exists?(vulnerability_directory)
