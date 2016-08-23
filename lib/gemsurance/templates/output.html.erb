@@ -784,7 +784,12 @@
                 <%= gem_info.name %>
               <% end %>
             </td>
-            <td><%= gem_info.current_version %></td>
+            <td>
+              <%= gem_info.current_version %>
+              <% if gem_info.current_version_release_date %>
+              (<%= gem_info.current_version_release_date.to_date.to_s %>)
+              <% end %>
+            </td>
             <td><%= gem_info.newest_version %></td>
             <td>
               <% if gem_info.vulnerable? %>

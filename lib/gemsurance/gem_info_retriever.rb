@@ -5,12 +5,13 @@ module Gemsurance
       STATUS_CURRENT    = 'current'
       STATUS_VULNERABLE = 'vulnerable'
       
-      attr_reader :name, :current_version, :newest_version, :in_gem_file, :vulnerabilities,
+      attr_reader :name, :current_version, :current_version_release_date, :newest_version, :in_gem_file, :vulnerabilities,
                   :homepage_uri, :source_code_uri, :documentation_uri
       
-      def initialize(name, current_version, newest_version, in_gem_file, homepage_uri, source_code_uri, documentation_uri, status = STATUS_CURRENT)
+      def initialize(name, current_version, newest_version, in_gem_file, homepage_uri, source_code_uri, documentation_uri, status = STATUS_CURRENT, current_version_release_date = nil)
         @name = name
         @current_version = current_version
+        @current_version_release_date = current_version_release_date
         @newest_version = newest_version
         @in_gem_file = in_gem_file
         @homepage_uri = homepage_uri
@@ -70,6 +71,19 @@ module Gemsurance
         git_outdated = current_spec.git_version != active_spec.git_version
 
         info = ::Gems.info(active_spec.name)
+        
+        # TODO: to speed things up, avoid ::Gems.info call and instead figure out how to reliably
+        # use the output from ::Gems.versions. I'm not sure yet if relying on the timestamps (built_at, created_at)
+        # is good enough. It /looks/ the active version is at index 0
+        # but this should be verified (rubygems API doc or source).
+        versions = ::Gems.versions(active_spec.name)
+        current_version = versions.find { |version| version.fetch("number") == current_spec.version.to_s }
+        
+        # NOTE: I'm picking built_at based on a test on awesome_print 1.0.2, which gives 2011-12-20 for built_at
+        # and 2011-12-21 for created_at, and https://rubygems.org/gems/awesome_print/versions
+        # shows December 20, 2011.
+        current_version_release_date = current_version ? Time.parse(current_version.fetch("built_at")) : nil
+        
         homepage_uri      = info['homepage_uri']
         documentation_uri = info['documentation_uri']
         source_code_uri   = info['source_code_uri']
@@ -79,9 +93,9 @@ module Gemsurance
         # current_version = "#{current_spec.version}#{current_spec.git_version}"
         in_gem_file = @dependencies.any?{|d| d.name == active_spec.name}
         if gem_outdated || git_outdated
-          gem_infos << GemInfo.new(active_spec.name, current_spec.version, active_spec.version, in_gem_file, homepage_uri, documentation_uri, source_code_uri, GemInfo::STATUS_OUTDATED)
+          gem_infos << GemInfo.new(active_spec.name, current_spec.version, active_spec.version, in_gem_file, homepage_uri, documentation_uri, source_code_uri, GemInfo::STATUS_OUTDATED, current_version_release_date)
         else
-          gem_infos << GemInfo.new(active_spec.name, current_spec.version, current_spec.version, in_gem_file, homepage_uri, documentation_uri, source_code_uri)
+          gem_infos << GemInfo.new(active_spec.name, current_spec.version, current_spec.version, in_gem_file, homepage_uri, documentation_uri, source_code_uri, GemInfo::STATUS_CURRENT, current_version_release_date)
         end
       end
       gem_infos
