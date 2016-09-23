@@ -20,7 +20,11 @@ module Gemsurance
       end
 
       generate_report
-      exit 1 if @gem_infos.any? { |info| info.vulnerable? }
+      if @gem_infos.any? { |info| info.vulnerable? }
+        exit 1
+      elsif @gem_infos.any? { |info| info.outdated? } and @options[:fail_outdated]
+        exit 2
+      end
     end
 
   private
