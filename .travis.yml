@@ -1,6 +1,9 @@
 language: ruby
 script: bundle exec rake test:units
 
+before_install:
+  - gem install bundler
+
 rvm:
   - 2.2
   - 2.1
