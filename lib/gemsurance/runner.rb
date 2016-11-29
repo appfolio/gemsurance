@@ -22,7 +22,7 @@ module Gemsurance
       generate_report
       if @gem_infos.any? { |info| info.vulnerable? }
         exit 1
-      elsif @gem_infos.any? { |info| info.outdated? } and @options[:fail_outdated]
+      elsif @gem_infos.any? { |info| info.outdated? } && @options[:fail_outdated]
         exit 2
       end
     end
