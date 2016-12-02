@@ -17,6 +17,10 @@ module Gemsurance
             options[:pre] = true
           end
 
+          opts.on("--fail-outdated", "Returns exit code 2 if any gems are outdated") do |lib|
+            options[:fail_outdated] = true
+          end
+
           opts.on("--output FILE", "Output report to given file") do |file|
             options[:output_file] = file
           end

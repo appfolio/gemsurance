@@ -43,6 +43,52 @@ class RunnerTest < Test::Unit::TestCase
     end
   end
 
+  def test_report_with_outdated_gem
+    runner = Gemsurance::Runner.new(fail_outdated: true)
+
+    outdated_gem = Gemsurance::GemInfoRetriever::GemInfo.new(
+      'actionpack',
+      Gem::Version.new('3.2.14'),
+      Gem::Version.new('4.0.2'),
+      true,
+      'http://homepage.com',
+      'http://source.com',
+      'http://documentation.com',
+      Gemsurance::GemInfoRetriever::GemInfo::STATUS_OUTDATED
+    )
+
+    runner.instance_variable_set(:@gem_infos_loaded, true)
+    runner.instance_variable_set(:@gem_infos, [outdated_gem])
+    runner.expects(:generate_report).returns(true)
+
+    assert_raise SystemExit do
+      runner.report
+    end
+  end
+
+  def test_report_with_outdated_gem_do_not_fail
+    runner = Gemsurance::Runner.new(fail_outdated: false)
+
+    outdated_gem = Gemsurance::GemInfoRetriever::GemInfo.new(
+      'actionpack',
+      Gem::Version.new('3.2.14'),
+      Gem::Version.new('4.0.2'),
+      true,
+      'http://homepage.com',
+      'http://source.com',
+      'http://documentation.com',
+      Gemsurance::GemInfoRetriever::GemInfo::STATUS_OUTDATED
+    )
+
+    runner.instance_variable_set(:@gem_infos_loaded, true)
+    runner.instance_variable_set(:@gem_infos, [outdated_gem])
+    runner.expects(:generate_report).returns(true)
+
+    assert_nothing_raised do
+      runner.report
+    end
+  end
+
   def test_run_with_not_frozen_bundler
     runner = Gemsurance::Runner.new
     stub_external_calls(runner)
