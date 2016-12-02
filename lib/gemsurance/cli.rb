@@ -25,6 +25,10 @@ module Gemsurance
             options[:output_file] = file
           end
 
+          opts.on("--config FILE", "Read configuration from file. Defaults to .gemsurance.yml") do |file|
+            options[:config_file] = file
+          end
+
           opts.on("--format FORMAT", "Output report to given format (html & yml available). Html by default.") do |format|
             options[:formatter] = format
           end
