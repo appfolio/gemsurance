@@ -1,3 +1,5 @@
+## 0.7.0
+Add --fail-outdated command-line option to exit with code 2 if any gems are outdated (@thomasbiddle)
 ## 0.6.0
 Support bundled gems in deployment mode (@bencolon).
 ## 0.5.0
