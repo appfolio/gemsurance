@@ -1,3 +1,5 @@
+## 0.8.0
+Add the ability to whitelist vulnerabilities in particular gem versions with the --whitelist option (@paulwhite)
 ## 0.7.0
 Add --fail-outdated command-line option to exit with code 2 if any gems are outdated (@thomasbiddle)
 ## 0.6.0
