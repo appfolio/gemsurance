@@ -23,6 +23,11 @@ class CliTest < Test::Unit::TestCase
     assert_equal 'file.html', options[:output_file]
   end
 
+  def test_option_whitelist_with_arg
+    options = Gemsurance::Cli.parse('--whitelist', 'file.yml')
+    assert_equal 'file.yml', options[:whitelist_file]
+  end
+
   def test_option_output_without_arg
     assert_raise OptionParser::MissingArgument do
       Gemsurance::Cli.parse('--output')

@@ -6,6 +6,9 @@ module Gemsurance
       @formatter   = options.delete(:formatter) || :html
       @output_file = options.delete(:output_file) || "gemsurance_report.#{@formatter}"
       @options     = options
+
+      whitelist_file = options.delete(:whitelist_file) || '.gemsurance.yml'
+      @whitelist = File.exist?(whitelist_file) ? YAML.load_file(whitelist_file) : false
     end
 
     def run
@@ -74,8 +77,15 @@ module Gemsurance
 
             current_version_is_affected = (vulnerability.unaffected_versions || []).none?(&current_version_satisfies_requirement)
             current_version_isnt_patched = (vulnerability.patched_versions || []).none?(&current_version_satisfies_requirement)
+            current_version_isnt_whitelisted = if (whitelisted_versions = fetch_whitelisted_versions_for(gem_info.name,
+                                                                                                         vulnerability.cve,
+                                                                                                         vulnerability.osvdb))
+              (whitelisted_versions || []).none?(&current_version_satisfies_requirement)
+            else
+              true
+            end
 
-            if current_version_is_affected && current_version_isnt_patched
+            if current_version_is_affected && current_version_isnt_patched && current_version_isnt_whitelisted
               gem_info.add_vulnerability!(vulnerability)
             end
           end
@@ -92,6 +102,18 @@ module Gemsurance
         file.puts output_data
       end
       puts "Generated report #{@output_file}."
+    end
+
+    def fetch_whitelisted_versions_for(gem, cve = nil, osvdb = nil)
+      if @whitelist && (whitelisted_gem = @whitelist[gem])
+        if cve
+          whitelisted_gem["CVE-#{cve}"]
+        elsif osvdb
+          whitelisted_gem["OSVDB-#{osvdb}"]
+        else
+          # There are is no CVE or OSVDB for this vulnerability
+        end
+      end
     end
 
     def resolved_definition

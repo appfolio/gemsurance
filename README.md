@@ -31,7 +31,20 @@ Running the gemsurance check as part of your RSpec test suite will cause an RSpe
 Command-line options to the gemsurance executable are as follows:
 - --pre: Consider pre-release gem versions
 - --output FILE: Output report to specified file
+- --whitelist FILE: Read whitelist from file. Defaults to .gemsurance.yml
 - --format FORMAT: Output report to specified format (html & yml available). Html by default.
+
+The whitelist must be in the format
+```yaml
+---
+nokogiri:
+  CVE-2015-1819:
+    - 1.5.9
+    - 1.6.0
+  OSVDB-101179:
+    - 1.5.6
+    - 1.6.0
+```
 
 ## TODOs
 - Add CSV formatter
