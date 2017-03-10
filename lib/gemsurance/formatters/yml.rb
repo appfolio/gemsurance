@@ -3,7 +3,7 @@ module Gemsurance
     class Yml < Base
       def format
         @extension = "yml"
-        ERB.new(File.read(output_path), nil, '-').result(binding)
+        sorted_gems.to_yaml
       end
     end
   end
