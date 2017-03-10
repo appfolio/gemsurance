@@ -33,6 +33,7 @@ module Gemsurance
   private
     def build_gem_infos
       @gem_infos = retrieve_bundled_gem_infos
+      @ruby_version = Bundler.locked_gems.ruby_version
       retrieve_vulnerability_data
       add_vulnerability_data
 
@@ -96,7 +97,7 @@ module Gemsurance
     def generate_report
       puts "Generating report..."
 
-      output_data = Gemsurance::Formatters.const_get(:"#{@formatter.to_s.capitalize}").new(@gem_infos).format
+      output_data = Gemsurance::Formatters.const_get(:"#{@formatter.to_s.capitalize}").new(@gem_infos, @ruby_version).format
 
       File.open(@output_file, "w+") do |file|
         file.puts output_data
