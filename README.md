@@ -32,7 +32,7 @@ Command-line options to the gemsurance executable are as follows:
 - --pre: Consider pre-release gem versions
 - --output FILE: Output report to specified file
 - --whitelist FILE: Read whitelist from file. Defaults to .gemsurance.yml
-- --format FORMAT: Output report to specified format (html & yml available). Html by default.
+- --format FORMAT: Output report to specified format (html, csv, & yml available). Html by default.
 
 The whitelist must be in the format
 ```yaml
@@ -47,7 +47,6 @@ nokogiri:
 ```
 
 ## TODOs
-- Add CSV formatter
 - Support Git versions of gems
 
 ## Contributing

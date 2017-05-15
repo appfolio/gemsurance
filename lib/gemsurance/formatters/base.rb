@@ -1,8 +1,9 @@
 module Gemsurance
   module Formatters
     class Base
-      def initialize(gem_infos)
+      def initialize(gem_infos, version)
         @gem_infos = gem_infos
+        @ruby_version = version
       end
 
       def output_path
