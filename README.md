@@ -48,6 +48,7 @@ nokogiri:
 
 ## TODOs
 - Support Git versions of gems
+- Formatting as JSON
 
 ## Contributing
 Contributions are always welcome. Please fork the repo and create a pull request or create an issue.

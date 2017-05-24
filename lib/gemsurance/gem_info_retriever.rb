@@ -3,6 +3,7 @@ require 'json'
 module Gemsurance
   class GemInfoRetriever
     class GemInfo
+      GEM_ATTRIBUTES = [:name, :current_version, :newest_version, :in_gem_file, :homepage_uri, :source_code_uri, :documentation_uri, :status, :vulnerabilities]
       STATUS_OUTDATED   = 'outdated'
       STATUS_CURRENT    = 'current'
       STATUS_VULNERABLE = 'vulnerable'
@@ -47,31 +48,63 @@ module Gemsurance
           @vulnerabilities == other.vulnerabilities
       end
 
-      def self.attributes
-        ['name', 'current_version', 'newest_version', 'in_gem_file', 'homepage_uri', 'documentation_uri', 'source_code_uri', 'status', 'vulnerabilities']
-      end
-
-      def attributes
-        self.class.attributes
-      end
-
-      def values
-        self.instance_variables.map{|ivar| self.instance_variable_get ivar}
-      end
-
       def to_csv
         formatted_values.to_csv
+      end
+
+      def to_hash
+        {
+          'in_gem_file' =>  in_gem_file,
+          'bundle_version' =>  current_version.to_s,
+          'newest_version' =>  newest_version.to_s,
+          'status' => human_status,
+          'homepage_url' =>  homepage_uri,
+          'source_code_url' =>  source_code_uri,
+          'documentation_url' =>  documentation_uri,
+          'vulnerabilities' => vulns_to_hash
+        }
       end
 
       private
 
       def formatted_values
-        self.instance_variables.map do |ivar|
-          if ivar == :@vulnerabilities
-            @vulnerabilities.map { |vuln| vuln.attributes.to_json }.to_s
+        GEM_ATTRIBUTES.map do |attr|
+          if attr == :vulnerabilities
+            if @vulnerabilities.empty?
+              ''
+            else
+              @vulnerabilities.map { |vuln| vuln.attributes }.to_json
+            end
+          elsif attr == :status
+            human_status
           else
-            self.instance_variable_get(ivar).to_s
+            self.send(attr).to_s
           end
+        end
+      end
+
+      def human_status
+        if vulnerable?
+          return 'vulnerable'
+        elsif outdated?
+          return 'outofdate'
+        elsif current?
+          return 'uptodate'
+        else
+          return 'unknown'
+        end
+      end
+
+      def vulns_to_hash
+        return nil if vulnerabilities.empty?
+
+        vulnerabilities.map do |vulnerability|
+          {
+            'title' => vulnerability.title,
+            'cve' =>  vulnerability.cve,
+            'url' =>  vulnerability.url,
+            'patched_versions' =>  (vulnerability.patched_versions || []).join(', ')
+          }
         end
       end
     end

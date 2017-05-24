@@ -6,7 +6,8 @@ module Gemsurance
         @extension = "csv"
 
         file = ""
-        file << CSV.generate_line(GemInfoRetriever::GemInfo.attributes)
+        title_attributes = GemInfoRetriever::GemInfo::GEM_ATTRIBUTES.map {|attr| attr.to_s }
+        file << CSV.generate_line(title_attributes)
 
         sorted_gems.each do |gem|
           file << gem.to_csv

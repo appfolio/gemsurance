@@ -1,6 +1,5 @@
 ## 0.9.0
-Changed the format of the YAML output (BREAKING CHANGE - the file will now parse to an array rather than a hash), but you can now use the full serialized ruby objects
---format yaml always outputs valid YAML now
+Updated way that YAML is outputted so the format is always valid
 Added support for --format csv
 ## 0.8.0
 Add the ability to whitelist vulnerabilities in particular gem versions with the --whitelist option (@paulwhite)
