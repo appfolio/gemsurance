@@ -1,3 +1,6 @@
+## 0.9.0
+Updated way that YAML is outputted so the format is always valid
+Added support for --format csv
 ## 0.8.0
 Add the ability to whitelist vulnerabilities in particular gem versions with the --whitelist option (@paulwhite)
 ## 0.7.0

@@ -1,13 +1,16 @@
+require 'json'
+
 module Gemsurance
   class GemInfoRetriever
     class GemInfo
+      GEM_ATTRIBUTES = [:name, :current_version, :newest_version, :in_gem_file, :homepage_uri, :source_code_uri, :documentation_uri, :status, :vulnerabilities]
       STATUS_OUTDATED   = 'outdated'
       STATUS_CURRENT    = 'current'
       STATUS_VULNERABLE = 'vulnerable'
-      
+
       attr_reader :name, :current_version, :newest_version, :in_gem_file, :vulnerabilities,
-                  :homepage_uri, :source_code_uri, :documentation_uri
-      
+                  :homepage_uri, :source_code_uri, :documentation_uri, :status
+
       def initialize(name, current_version, newest_version, in_gem_file, homepage_uri, source_code_uri, documentation_uri, status = STATUS_CURRENT)
         @name = name
         @current_version = current_version
@@ -18,22 +21,21 @@ module Gemsurance
         @source_code_uri = source_code_uri
         @status = status
         @vulnerabilities = []
-        
       end
-      
+
       def add_vulnerability!(vulnerability)
         @status = STATUS_VULNERABLE
         @vulnerabilities << vulnerability
       end
-      
+
       def outdated?
         @status == STATUS_OUTDATED
       end
-      
+
       def current?
         @status == STATUS_CURRENT
       end
-      
+
       def vulnerable?
         @status == STATUS_VULNERABLE
       end
@@ -45,17 +47,77 @@ module Gemsurance
           @status == other.instance_variable_get(:@status) &&
           @vulnerabilities == other.vulnerabilities
       end
+
+      def to_csv
+        formatted_values.to_csv
+      end
+
+      def to_hash
+        {
+          'in_gem_file' =>  in_gem_file,
+          'bundle_version' =>  current_version.to_s,
+          'newest_version' =>  newest_version.to_s,
+          'status' => human_status,
+          'homepage_url' =>  homepage_uri,
+          'source_code_url' =>  source_code_uri,
+          'documentation_url' =>  documentation_uri,
+          'vulnerabilities' => vulns_to_hash
+        }
+      end
+
+      private
+
+      def formatted_values
+        GEM_ATTRIBUTES.map do |attr|
+          if attr == :vulnerabilities
+            if @vulnerabilities.empty?
+              ''
+            else
+              @vulnerabilities.map { |vuln| vuln.attributes }.to_json
+            end
+          elsif attr == :status
+            human_status
+          else
+            self.send(attr).to_s
+          end
+        end
+      end
+
+      def human_status
+        if vulnerable?
+          return 'vulnerable'
+        elsif outdated?
+          return 'outofdate'
+        elsif current?
+          return 'uptodate'
+        else
+          return 'unknown'
+        end
+      end
+
+      def vulns_to_hash
+        return nil if vulnerabilities.empty?
+
+        vulnerabilities.map do |vulnerability|
+          {
+            'title' => vulnerability.title,
+            'cve' =>  vulnerability.cve,
+            'url' =>  vulnerability.url,
+            'patched_versions' =>  (vulnerability.patched_versions || []).join(', ')
+          }
+        end
+      end
     end
-    
+
     def initialize(specs, dependencies, bundle_definition)
       @specs = specs
       @dependencies = dependencies
       @bundle_definition = bundle_definition
     end
-    
+
     def retrieve(options = {})
       gem_infos = []
-      
+
       @specs.each do |current_spec|
         active_spec = @bundle_definition.index[current_spec.name].sort_by { |b| b.version }
 
