@@ -29,8 +29,12 @@ module Gemsurance
             options[:whitelist_file] = file
           end
 
-          opts.on("--format FORMAT", "Output report to given format (html & yml available). Html by default.") do |format|
+          opts.on("--format FORMAT", "Output report to given format (html, csv, and yml available). html by default.") do |format|
             options[:formatter] = format
+            unless %w(html csv yml).include?(options[:formatter])
+              puts "Invalid formatter. Possible values are html, csv, and yml."
+              exit 1
+            end
           end
 
           opts.on_tail("-h", "--help", "Show this help") do
