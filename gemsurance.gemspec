@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.name                      = "gemsurance"
   s.version                   = Gemsurance::VERSION
 
-  s.required_ruby_version     = '>= 1.9.3'
+  s.required_ruby_version     = '>= 2.4'
   s.required_rubygems_version = '>= 1.8.11'
   s.authors                   = ["Jon Kessler"]
   s.description               = "Gem vulnerability and version checker"
