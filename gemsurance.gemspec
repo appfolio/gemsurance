@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.name                      = "gemsurance"
   s.version                   = Gemsurance::VERSION
 
-  s.required_ruby_version     = '>= 1.9.3'
+  s.required_ruby_version     = '>= 2.4'
   s.required_rubygems_version = '>= 1.8.11'
   s.authors                   = ["Jon Kessler"]
   s.description               = "Gem vulnerability and version checker"
@@ -21,10 +21,10 @@ Gem::Specification.new do |s|
 
   s.add_dependency("bundler", "~> 1.2")
   s.add_dependency("git", "~> 1.2")
-  s.add_dependency("gems", "~> 0.8")
+  s.add_dependency("gems", ">= 0.8")
 
   s.add_development_dependency("mocha", "0.14.0")
   s.add_development_dependency("rake", "0.9.2.2")
-  s.add_development_dependency("nokogiri", "1.5.9")
+  s.add_development_dependency("nokogiri", "1.10.0")
   s.add_development_dependency("test-unit", "3.0.9")
 end
