@@ -3,14 +3,16 @@ PATH
   specs:
     gemsurance (0.9.0)
       bundler (~> 1.2)
-      gems (~> 0.8)
+      gems (>= 0.8)
       git (~> 1.2)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    gems (0.8.3)
-    git (1.3.0)
+    gems (1.1.1)
+      json
+    git (1.5.0)
+    json (2.1.0)
     metaclass (0.0.4)
     mini_portile2 (2.4.0)
     mocha (0.14.0)

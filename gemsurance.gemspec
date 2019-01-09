@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency("bundler", "~> 1.2")
   s.add_dependency("git", "~> 1.2")
-  s.add_dependency("gems", "~> 0.8")
+  s.add_dependency("gems", ">= 0.8")
 
   s.add_development_dependency("mocha", "0.14.0")
   s.add_development_dependency("rake", "0.9.2.2")
