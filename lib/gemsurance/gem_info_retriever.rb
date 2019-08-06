@@ -131,7 +131,7 @@ module Gemsurance
         gem_outdated = Gem::Version.new(active_spec.version) > Gem::Version.new(current_spec.version)
         git_outdated = current_spec.git_version != active_spec.git_version
 
-        info = ::Gems.info(active_spec.name)
+        info = get_gem_info(active_spec.name)
         homepage_uri      = info['homepage_uri']
         documentation_uri = info['documentation_uri']
         source_code_uri   = info['source_code_uri']
@@ -147,6 +147,14 @@ module Gemsurance
         end
       end
       gem_infos
+    end
+
+    private
+
+    def get_gem_info(gem_name)
+      Gems.info(gem_name)
+    rescue StandardError
+      {}
     end
   end
 end
