@@ -1,3 +1,6 @@
+## 0.10.0
+* Add support for Bundler 2.x (@saturnflyer)
+* Drop support for Ruby < 2.4
 ## 0.9.0
 * Updated way that YAML is outputted so the format is always valid (@bagmangood)
 * Added support for --format csv (@bagmangood)
