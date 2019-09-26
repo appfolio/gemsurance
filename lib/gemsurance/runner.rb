@@ -52,7 +52,7 @@ module Gemsurance
     def retrieve_vulnerability_data
       puts "Retrieving latest vulnerability data..."
 
-      if File.exists?('./tmp/vulnerabilities')
+      if File.exist?('./tmp/vulnerabilities')
         g = Git.open('./tmp/vulnerabilities')
         g.pull
       else
@@ -65,7 +65,7 @@ module Gemsurance
 
       @gem_infos.each do |gem_info|
         vulnerability_directory = File.join(vulnerabilities_directory, gem_info.name)
-        if File.exists?(vulnerability_directory)
+        if File.exist?(vulnerability_directory)
           Dir.foreach(vulnerability_directory) do |yaml_file|
             next if yaml_file =~ /\A\./
             vulnerability = Vulnerability.new(File.read(File.join(vulnerability_directory, yaml_file)))
