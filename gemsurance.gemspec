@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.files                     = `git ls-files -- bin lib`.split("\n")
   s.executables               = ["gemsurance"]
 
-  s.add_dependency("bundler", "~> 2.0")
+  s.add_dependency("bundler", ">= 1.2", "< 3.0")
   s.add_dependency("git", "~> 1.2")
   s.add_dependency("gems", ">= 0.8")
 
