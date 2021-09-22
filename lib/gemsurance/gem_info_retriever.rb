@@ -119,7 +119,7 @@ module Gemsurance
       gem_infos = []
 
       @specs.each do |current_spec|
-        active_spec = @bundle_definition.index[current_spec.name].sort_by { |b| b.version }
+        active_spec = @bundle_definition.specs[current_spec.name].sort_by { |b| b.version }
 
         if !current_spec.version.prerelease? && !options[:pre] && active_spec.size > 1
           active_spec = active_spec.delete_if { |b| b.respond_to?(:version) && b.version.prerelease? }
