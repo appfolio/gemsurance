@@ -1,0 +1,16 @@
+---
+version: 2
+registries:
+  ruby-github:
+    type: rubygems-server
+    url: https://rubygems.pkg.github.com/appfolio
+    token: "${{secrets.READ_ONLY_PACKAGES_CCIMU}}"
+updates:
+- package-ecosystem: bundler
+  directory: "/"
+  schedule:
+    interval: daily
+  pull-request-branch-name:
+    separator: "-"
+  registries: "*"
+  open-pull-requests-limit: 0
